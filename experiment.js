@@ -1,99 +1,111 @@
-// Stroop task example with lab.js
+// Adapted from Stroop task example with lab.js
 // Initial implementation by Felix Henninger
+// Current implementation by Mario Belledonne
 
 // Define a template for a stroop trial
 var trialTemplate = new lab.flow.Sequence({
   datacommit: false,
   content: [
-    // Fixation cross ----------------------------------------------------------
-    // This screen uses the trial page template,
-    // but substitutes a gray plus as a fixation cross
-    new lab.html.Screen({
-      contentUrl: 'pages/3-trial.html',
-      parameters: {
-        color: 'gray',
-        word: '+',
-        weight: 'normal',
-      },
-      // Don't log data from this screen
-      datacommit: false,
-      // Display the fixation cross for 500ms
-      timeout: 500,
-    }),
-    // Trial screen ------------------------------------------------------------
-    // This is the central screen in the experiment:
-    // the display that participants respond to.
-    new lab.html.Screen({
-      // This screen is assigned a title,
-      // so that we can recognize it more easily
-      // in the dataset.
-      title: 'StroopScreen',
-      // Again, we use the trial page template
-      contentUrl: 'pages/3-trial.html',
-      parameters: {
-        // Color and displayed word
-        // are determined by the trial
-        weight: 'bold',
-      },
-      // Each possible color response is
-      // associated with a key
-      responses: {
-        'keypress(r)': 'red',
-        'keypress(g)': 'green',
-        'keypress(b)': 'blue',
-        'keypress(o)': 'orange',
-      },
-      // The display terminates after 1500ms
-      timeout: 1500,
-      // Because the color is set dynamically,
-      // we need to set the correct response by hand
-      messageHandlers: {
-        'before:prepare': function() {
-          // Set the correct response
-          // before the component is prepared
-          this.options.correctResponse = this.aggregateParameters.color
-        },
-      }
-    }),
-    // Feedback (or empty) screen ----------------------------------------------
-    new lab.html.Screen({
-      contentUrl: 'pages/3-trial.html',
-      parameters: {
-        color: 'gray',
-        word: '', // This is a placeholder, we generate the word below
-        weight: 'normal',
-      },
-      datacommit: false,
-      // Because feedback can only be given after
-      // the choice has been recorded, this component
-      // is prepared at the last possible moment.
-      tardy: true,
-      // Generate feedback
-      messageHandlers: {
-        'before:prepare': function() {
-          if (this.aggregateParameters.feedback) {
-            // Generate feedback if requested
-            this.options.timeout = 1000
 
-            // First, check if the participant responded in time at all
-            if (this.options.datastore.state['ended_on'] === 'response') {
-              // If there is a response, check its veracity
-              if (this.options.datastore.state['correct'] === true) {
-                this.options.parameters.word = 'Well done!'
-              } else {
-                this.options.parameters.word = 'Please respond as quickly and accurately as you can!'
+    // Fixation cross
+      new lab.html.Screen({
+          contentUrl: 'pages/3-trial.html',
+          parameters: {
+              color: 'gray',
+              word: '+',
+              weight: 'normal',
+          },
+          // Don't log data from this screen
+        datacommit: false,
+          // Display the fixation cross for 500ms
+          timeout: 500,
+      }),
+
+      // Trial screen that shows the first scene
+      new lab.html.Screen({
+        // This screen is assigned a title,
+          // so that we can recognize it more easily
+          // in the dataset.
+          title: 'stimA',
+          // Again, we use the trial page template
+          contentUrl: 'pages/3-trial.html',
+          parameters: {
+              // Color and displayed word
+              // are determined by the trial
+          weight: 'bold',
+          },
+          // The display terminates after 1500ms
+          timeout: 500,
+      }),
+
+      // Mask
+      new lab.html.Screen({
+          contentUrl: 'pages/3-trial.html',
+          parameters: {
+              color: 'gray',
+              word: '+',
+              weight: 'normal',
+          },
+          // Don't log data from this screen
+          datacommit: false,
+          // Display the fixation cross for 500ms
+          timeout: 200,
+      }),
+
+      // Present scene 2
+      new lab.html.Screen({
+          // This screen is assigned a title,
+          // so that we can recognize it more easily
+          // in the dataset.
+          title: 'stimB',
+          // Again, we use the trial page template
+          contentUrl: 'pages/3-trial.html',
+          parameters: {
+              // Color and displayed word
+              // are determined by the trial
+              weight: 'bold',
+          },
+          timeout: 500,
+      }),
+
+      // Record response
+      new lab.html.Screen({
+          contentUrl: 'pages/3-trial.html',
+          parameters: {
+              word: '',
+              weight: 'bold',
+          },
+          datacommit: false,
+          // Because feedback can only be given after
+          // the choice has been recorded, this component
+          // is prepared at the last possible moment.
+          tardy: true,
+          // Generate feedback
+          messageHandlers: {
+              'before:prepare': function() {
+                  if (this.aggregateParameters.feedback) {
+                      // Generate feedback if requested
+                      this.options.timeout = 1000
+
+                      // First, check if the participant responded in time at all
+                      if (this.options.datastore.state['ended_on'] === 'response') {
+                          // If there is a response, check its veracity
+                          if (this.options.datastore.state['correct'] === true) {
+                              this.options.parameters.word = 'Well done!'
+                          } else {
+                              this.options.parameters.word = 'Please respond as quickly and accurately as you can!'
+                          }
+                      } else {
+                          // If no response was given, poke participants to speed up
+                          this.options.parameters.word = 'Can you go faster?'
+                      }
+                  } else {
+                      // If no feedback is shown, shorten the inter-trial interval
+                      this.options.timeout = 500
+                  }
               }
-            } else {
-              // If no response was given, poke participants to speed up
-              this.options.parameters.word = 'Can you go faster?'
-            }
-          } else {
-            // If no feedback is shown, shorten the inter-trial interval
-            this.options.timeout = 500
-          }
-        }
-      },
-    }),
+          },
+      }),
   ]
 })
 
