@@ -40,7 +40,7 @@ var trialTemplate = new lab.flow.Sequence({
 
       // Mask
       new lab.html.Screen({
-          contentUrl: 'pages/3-trial.html',
+          contentUrl: 'pages/fixation.html',
           parameters: {
               color: 'gray',
               word: '+',
@@ -59,11 +59,9 @@ var trialTemplate = new lab.flow.Sequence({
           // in the dataset.
           title: 'stimB',
           // Again, we use the trial page template
-          contentUrl: 'pages/3-trial.html',
+          contentUrl: 'pages/trial.html',
           parameters: {
-              // Color and displayed word
-              // are determined by the trial
-              weight: 'bold',
+              media: this.parameters.second,
           },
           timeout: 500,
       }),
@@ -111,23 +109,27 @@ var trialTemplate = new lab.flow.Sequence({
 
 // Define the trials in terms of the central parameters:
 // The word shown on screen, and its color
+// var trials = [
+//   { color: 'red', word: 'red' },
+//   { color: 'red', word: 'green' },
+//   { color: 'red', word: 'blue' },
+//   { color: 'red', word: 'orange' },
+//   { color: 'green', word: 'red' },
+//   { color: 'green', word: 'green' },
+//   { color: 'green', word: 'blue' },
+//   { color: 'green', word: 'orange' },
+//   { color: 'blue', word: 'red' },
+//   { color: 'blue', word: 'green' },
+//   { color: 'blue', word: 'blue' },
+//   { color: 'blue', word: 'orange' },
+//   { color: 'orange', word: 'red' },
+//   { color: 'orange', word: 'green' },
+//   { color: 'orange', word: 'blue' },
+//   { color: 'orange', word: 'orange' },
+// ]
 var trials = [
-  { color: 'red', word: 'red' },
-  { color: 'red', word: 'green' },
-  { color: 'red', word: 'blue' },
-  { color: 'red', word: 'orange' },
-  { color: 'green', word: 'red' },
-  { color: 'green', word: 'green' },
-  { color: 'green', word: 'blue' },
-  { color: 'green', word: 'orange' },
-  { color: 'blue', word: 'red' },
-  { color: 'blue', word: 'green' },
-  { color: 'blue', word: 'blue' },
-  { color: 'blue', word: 'orange' },
-  { color: 'orange', word: 'red' },
-  { color: 'orange', word: 'green' },
-  { color: 'orange', word: 'blue' },
-  { color: 'orange', word: 'orange' },
+    { first: 'test_image_1.png',
+      second: 'test_image_2.jpg'},
 ]
 
 // With the individual components in place,
