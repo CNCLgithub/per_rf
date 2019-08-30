@@ -30,9 +30,8 @@ var trialTemplate = new lab.flow.Sequence({
           // Again, we use the trial page template
           contentUrl: 'pages/trial.html',
           parameters: {
-              // Color and displayed word
-              // are determined by the trial
-          weight: 'bold',
+              media: '${ parameters.first }', // parameters substituted ...
+              weight: 'bold',
           },
           // The display terminates after 1500ms
           timeout: 500,
@@ -61,14 +60,26 @@ var trialTemplate = new lab.flow.Sequence({
           // Again, we use the trial page template
           contentUrl: 'pages/trial.html',
           parameters: {
-              media: this.parameters.second,
+              media: '${ parameters.second }', // parameters substituted ...
+          },
+          responses: {
+              'keypress(s)': 'same',
+              'keypress(d)': 'different',
           },
           timeout: 500,
+          // we need to set the correct response by hand
+          messageHandlers: {
+              'before:prepare': function() {
+                  // Set the correct response
+                  // before the component is prepared
+                  this.options.correctResponse = ('${ parameters.first }' == '${ parameters.second }')
+              },
+          }
       }),
 
       // Record response
       new lab.html.Screen({
-          contentUrl: 'pages/trial.html',
+          contentUrl: 'pages/fixation.html',
           parameters: {
               word: '',
           },
@@ -127,8 +138,14 @@ var trialTemplate = new lab.flow.Sequence({
 //   { color: 'orange', word: 'orange' },
 // ]
 var trials = [
-    { first: 'test_image_1.png',
-      second: 'test_image_2.jpg'},
+    {
+        first: 'media/test_image_1.png',
+        second: 'media/test_image_2.jpg',
+    },
+    {
+        first: 'media/test_image_1.png',
+        second: 'media/test_image_1.png',
+    },
 ]
 
 // With the individual components in place,
@@ -136,57 +153,60 @@ var trials = [
 var experiment = new lab.flow.Sequence({
   content: [
     // Initial instructions
-    new lab.html.Screen({
-      contentUrl: 'pages/1-welcome.html',
-      responses: {
-        'keypress(Space)': 'continue'
-      },
-    }),
-    // Instruction summary
-    new lab.html.Screen({
-      contentUrl: 'pages/2-summary.html',
-      responses: {
-        'keypress(Space)': 'continue'
-      },
-    }),
-    // Practice trials
-    new lab.flow.Loop({
-      template: trialTemplate,
-      templateParameters: trials,
-      shuffle: true,
-      parameters: {
-        feedback: true,
-      },
-    }),
-    // Interlude
-    new lab.html.Screen({
-      contentUrl: 'pages/4-interlude.html',
-      responses: {
-        'keypress(Space)': 'continue',
-      },
-    }),
-    // Actual trials
-    new lab.flow.Loop({
-      template: trialTemplate,
-      templateParameters: trials,
-      shuffle: true,
-      parameters: {
-        feedback: false,
-      },
-    }),
-    // Thank-you page
-    new lab.html.Screen({
-      contentUrl: 'pages/5-thanks.html',
-      // Respond to clicks on the download button
-      events: {
-        'click button#download': function() {
-          this.options.datastore.download()
-        },
-      },
-    }),
+      new lab.html.Screen({
+          content: 'Hello world!'
+      }),
+      new lab.html.Screen({
+          contentUrl: 'pages/1-welcome.html',
+          responses: {
+              'keypress(Space)': 'continue'
+          },
+      }),
+  //   // Instruction summary
+  //   new lab.html.Screen({
+  //     contentUrl: 'pages/2-summary.html',
+  //     responses: {
+  //       'keypress(Space)': 'continue'
+  //     },
+  //   }),
+  //   // Practice trials
+  //   new lab.flow.Loop({
+  //     template: trialTemplate,
+  //     templateParameters: trials,
+  //     shuffle: true,
+  //     parameters: {
+  //       feedback: true,
+  //     },
+  //   }),
+  //   // Interlude
+  //   new lab.html.Screen({
+  //     contentUrl: 'pages/4-interlude.html',
+  //     responses: {
+  //       'keypress(Space)': 'continue',
+  //     },
+  //   }),
+  //   // Actual trials
+  //   new lab.flow.Loop({
+  //     template: trialTemplate,
+  //     templateParameters: trials,
+  //     shuffle: true,
+  //     parameters: {
+  //       feedback: false,
+  //     },
+  //   }),
+  //   // Thank-you page
+  //   new lab.html.Screen({
+  //     contentUrl: 'pages/5-thanks.html',
+  //     // Respond to clicks on the download button
+  //     events: {
+  //       'click button#download': function() {
+  //         this.options.datastore.download()
+  //       },
+  //     },
+  //   }),
   ],
-  datastore: new lab.data.Store()
 })
-
+// Collect data in a central data store
+experiment.options.datastore = new lab.data.Store()
 // Go!
 experiment.run()
