@@ -9,7 +9,7 @@ var trialTemplate = new lab.flow.Sequence({
 
     // Fixation cross
       new lab.html.Screen({
-          contentUrl: 'pages/3-trial.html',
+          contentUrl: 'pages/trial.html',
           parameters: {
               color: 'gray',
               word: '+',
@@ -28,7 +28,7 @@ var trialTemplate = new lab.flow.Sequence({
           // in the dataset.
           title: 'stimA',
           // Again, we use the trial page template
-          contentUrl: 'pages/3-trial.html',
+          contentUrl: 'pages/trial.html',
           parameters: {
               // Color and displayed word
               // are determined by the trial
@@ -68,10 +68,9 @@ var trialTemplate = new lab.flow.Sequence({
 
       // Record response
       new lab.html.Screen({
-          contentUrl: 'pages/3-trial.html',
+          contentUrl: 'pages/trial.html',
           parameters: {
               word: '',
-              weight: 'bold',
           },
           datacommit: false,
           // Because feedback can only be given after
