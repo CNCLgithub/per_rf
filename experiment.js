@@ -9,7 +9,7 @@ var trialTemplate = new lab.flow.Sequence({
 
     // Fixation cross
       new lab.html.Screen({
-          contentUrl: 'pages/trial.html',
+          contentUrl: 'pages/fixation.html',
           parameters: {
               color: 'gray',
               word: '+',
@@ -17,8 +17,7 @@ var trialTemplate = new lab.flow.Sequence({
           },
           // Don't log data from this screen
         datacommit: false,
-          // Display the fixation cross for 500ms
-          timeout: 500,
+          timeout: 1000,
       }),
 
       // Trial screen that shows the first scene
@@ -33,8 +32,7 @@ var trialTemplate = new lab.flow.Sequence({
               media: '${ parameters.first }', // parameters substituted ...
               weight: 'bold',
           },
-          // The display terminates after 1500ms
-          timeout: 500,
+          timeout: 100000,
       }),
 
       // Mask
@@ -48,7 +46,7 @@ var trialTemplate = new lab.flow.Sequence({
           // Don't log data from this screen
           datacommit: false,
           // Display the fixation cross for 500ms
-          timeout: 200,
+          timeout: 1000,
       }),
 
       // Present scene 2
@@ -62,22 +60,31 @@ var trialTemplate = new lab.flow.Sequence({
           parameters: {
               media: '${ parameters.second }', // parameters substituted ...
           },
-          responses: {
-              'keypress(s)': 'same',
-              'keypress(d)': 'different',
-          },
           timeout: 500,
+      }),
+
+      // Record response
+      new lab.html.Screen({
+          contentUrl: 'pages/fixation.html',
+          parameters: {
+              word: 'Same or Different?',
+          },
+          datacommit: false,
           // we need to set the correct response by hand
+          responses: {
+              'keypress(s)': true,
+              'keypress(d)': false,
+          },
           messageHandlers: {
               'before:prepare': function() {
                   // Set the correct response
                   // before the component is prepared
                   this.options.correctResponse = ('${ parameters.first }' == '${ parameters.second }')
               },
-          }
+          },
+          timout: 500
       }),
 
-      // Record response
       new lab.html.Screen({
           contentUrl: 'pages/fixation.html',
           parameters: {
@@ -132,57 +139,70 @@ var trials = [
 // With the individual components in place,
 // now put together the entire experiment
 var experiment = new lab.flow.Sequence({
-  content: [
-    // Initial instructions
-      new lab.html.Screen({
-          contentUrl: 'pages/1-welcome.html',
-          responses: {
-              'keypress(Space)': 'continue'
-          },
-      }),
-    // Instruction summary
-    new lab.html.Screen({
-      contentUrl: 'pages/2-summary.html',
-      responses: {
-        'keypress(Space)': 'continue'
-      },
-    }),
-    // Practice trials
-    new lab.flow.Loop({
-      template: trialTemplate,
-      templateParameters: trials,
-      shuffle: true,
-      parameters: {
-        feedback: true,
-      },
-    }),
-    // Interlude
-    new lab.html.Screen({
-      contentUrl: 'pages/4-interlude.html',
-      responses: {
-        'keypress(Space)': 'continue',
-      },
-    }),
-    // Actual trials
-    new lab.flow.Loop({
-      template: trialTemplate,
-      templateParameters: trials,
-      shuffle: true,
-      parameters: {
-        feedback: false,
-      },
-    }),
-    // Thank-you page
-    new lab.html.Screen({
-      contentUrl: 'pages/5-thanks.html',
-      // Respond to clicks on the download button
-      events: {
-        'click button#download': function() {
-          this.options.datastore.download()
-        },
-      },
-    }),
-  ],
+    content: [
+        // // Initial instructions
+        //   new lab.html.Screen({
+        //       contentUrl: 'pages/1-welcome.html',
+        //       responses: {
+        //           'keypress(Space)': 'continue'
+        //       },
+        //   }),
+        // // Instruction summary
+        // new lab.html.Screen({
+        //   contentUrl: 'pages/2-summary.html',
+        //   responses: {
+        //     'keypress(Space)': 'continue'
+        //   },
+        // }),
+        // Practice trials
+        new lab.html.Screen({
+            // This screen is assigned a title,
+            // so that we can recognize it more easily
+            // in the dataset.
+            title: 'stimA',
+            // Again, we use the trial page template
+            contentUrl: 'pages/trial.html',
+            parameters: {
+                media: '${ parameters.first }', // parameters substituted ...
+                weight: 'bold',
+            },
+            timeout: 100000,
+        }),
+        // new lab.flow.Loop({
+        //     template: trialTemplate,
+        //     templateParameters: trials,
+        //     shuffle: true,
+        //     parameters: {
+        //         feedback: true,
+        //     },
+        // }),
+        // // Interlude
+        // new lab.html.Screen({
+        //     contentUrl: 'pages/4-interlude.html',
+        //     responses: {
+        //         'keypress(Space)': 'continue',
+        //     },
+        // }),
+        // // Actual trials
+        // new lab.flow.Loop({
+        //     template: trialTemplate,
+        //     templateParameters: trials,
+        //     shuffle: true,
+        //     parameters: {
+        //         feedback: false,
+        //     },
+        // }),
+        // // Thank-you page
+        // new lab.html.Screen({
+        //     contentUrl: 'pages/5-thanks.html',
+        //     // Respond to clicks on the download button
+        //     events: {
+        //         'click button#download': function() {
+        //             this.options.datastore.download()
+        //         },
+        //     },
+        // }),
+    ],
 })
 // Collect data in a central data store
 experiment.options.datastore = new lab.data.Store()
