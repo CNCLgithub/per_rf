@@ -2,6 +2,7 @@
 // Initial implementation by Felix Henninger
 // Current implementation by Mario Belledonne
 
+
 // Define a template for a trial
 // Contains a few main components:
 // 1) The initial fixation
@@ -35,12 +36,9 @@ var trialTemplate = new lab.flow.Sequence({
           // in the dataset.
           title: 'stimA',
           // Again, we use the trial page template
-          contentUrl: 'pages/trial.html',
-          parameters: {
-              media: '${ parameters.first }', // parameters substituted ...
-              // media: 'media/test_image_1.png', // parameters substituted ...
-              weight: 'bold',
-          },
+          // contentUrl: 'pages/fixation.html',
+          content: '<main class="content-vertical-center content-horizontal-center">' +
+              '<div><img src=${ parameters.first }></div></main>',
           timeout: 1000,
       }),
 
@@ -65,10 +63,8 @@ var trialTemplate = new lab.flow.Sequence({
           // in the dataset.
           title: 'stimB',
           // Again, we use the trial page template
-          contentUrl: 'pages/trial.html',
-          parameters: {
-              media: '${ parameters.second }', // parameters substituted ...
-          },
+          content: '<main class="content-vertical-center content-horizontal-center">' +
+              '<div><img src=${ parameters.first }></div></main>',
           timeout: 500,
       }),
 
@@ -135,14 +131,10 @@ var trialTemplate = new lab.flow.Sequence({
 
 // Define the trials in terms of the central parameters:
 var trials = [
-    {
-        first: 'media/test_image_1.png',
-        second: 'media/test_image_2.jpg',
-    },
-    {
-        first: 'media/test_image_1.png',
-        second: 'media/test_image_1.png',
-    },
+    { first: 'media/test_image_1.png',
+      second: 'media/test_image_2.jpg'},
+    { first: 'media/test_image_1.png',
+      second: 'media/test_image_1.png'},
 ]
 
 // With the individual components in place,
