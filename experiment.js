@@ -2,7 +2,15 @@
 // Initial implementation by Felix Henninger
 // Current implementation by Mario Belledonne
 
-// Define a template for a stroop trial
+// Define a template for a trial
+// Contains a few main components:
+// 1) The initial fixation
+// 2) Presentation of the first image
+// 3) The interstitial fixation
+// 4) Presentation of the second image
+// 5) A response screen
+// 6) Optionally, display response feedback
+
 var trialTemplate = new lab.flow.Sequence({
   datacommit: false,
   content: [
@@ -20,7 +28,7 @@ var trialTemplate = new lab.flow.Sequence({
           timeout: 1000,
       }),
 
-      // Trial screen that shows the first scene
+      // First Image
       new lab.html.Screen({
         // This screen is assigned a title,
           // so that we can recognize it more easily
@@ -30,12 +38,13 @@ var trialTemplate = new lab.flow.Sequence({
           contentUrl: 'pages/trial.html',
           parameters: {
               media: '${ parameters.first }', // parameters substituted ...
+              // media: 'media/test_image_1.png', // parameters substituted ...
               weight: 'bold',
           },
-          timeout: 100000,
+          timeout: 1000,
       }),
 
-      // Mask
+      // Fixation
       new lab.html.Screen({
           contentUrl: 'pages/fixation.html',
           parameters: {
@@ -49,7 +58,7 @@ var trialTemplate = new lab.flow.Sequence({
           timeout: 1000,
       }),
 
-      // Present scene 2
+      // Second Image
       new lab.html.Screen({
           // This screen is assigned a title,
           // so that we can recognize it more easily
@@ -67,7 +76,7 @@ var trialTemplate = new lab.flow.Sequence({
       new lab.html.Screen({
           contentUrl: 'pages/fixation.html',
           parameters: {
-              word: 'Same or Different?',
+              word: 'Same (s) or Different (d)?',
           },
           datacommit: false,
           // we need to set the correct response by hand
@@ -155,27 +164,27 @@ var experiment = new lab.flow.Sequence({
         //   },
         // }),
         // Practice trials
-        new lab.html.Screen({
-            // This screen is assigned a title,
-            // so that we can recognize it more easily
-            // in the dataset.
-            title: 'stimA',
-            // Again, we use the trial page template
-            contentUrl: 'pages/trial.html',
-            parameters: {
-                media: '${ parameters.first }', // parameters substituted ...
-                weight: 'bold',
-            },
-            timeout: 100000,
-        }),
-        // new lab.flow.Loop({
-        //     template: trialTemplate,
-        //     templateParameters: trials,
-        //     shuffle: true,
+        // new lab.html.Screen({
+        //     // This screen is assigned a title,
+        //     // so that we can recognize it more easily
+        //     // in the dataset.
+        //     title: 'stimA',
+        //     // Again, we use the trial page template
+        //     contentUrl: 'pages/trial.html',
         //     parameters: {
-        //         feedback: true,
+        //         media: '${ parameters.first }', // parameters substituted ...
+        //         weight: 'bold',
         //     },
+        //     timeout: 100,
         // }),
+        new lab.flow.Loop({
+            template: trialTemplate,
+            templateParameters: trials,
+            shuffle: true,
+            parameters: {
+                feedback: true,
+            },
+        }),
         // // Interlude
         // new lab.html.Screen({
         //     contentUrl: 'pages/4-interlude.html',
