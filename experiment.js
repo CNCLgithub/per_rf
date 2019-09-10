@@ -18,6 +18,7 @@ var trialTemplate = new lab.flow.Sequence({
 
     // Fixation cross
       new lab.html.Screen({
+          title: 'fix1',
           contentUrl: 'pages/fixation.html',
           parameters: {
               color: 'gray',
@@ -35,10 +36,12 @@ var trialTemplate = new lab.flow.Sequence({
           // so that we can recognize it more easily
           // in the dataset.
           title: 'stimA',
-          // Again, we use the trial page template
-          // contentUrl: 'pages/fixation.html',
-          content: '<main class="content-vertical-center content-horizontal-center">' +
-              '<div><img src=${ parameters.first }></div></main>',
+          contentUrl: 'pages/trial.html',
+          messageHandlers: {
+              'before:prepare': function() {
+                  this.options.parameters = { image: this.aggregateParameters.first}
+              }
+          },
           timeout: 200,
       }),
 
@@ -62,14 +65,18 @@ var trialTemplate = new lab.flow.Sequence({
           // so that we can recognize it more easily
           // in the dataset.
           title: 'stimB',
-          // Again, we use the trial page template
-          content: '<main class="content-vertical-center content-horizontal-center">' +
-              '<div><img src=${ parameters.first }></div></main>',
+          contentUrl: 'pages/trial.html',
+          messageHandlers: {
+              'before:prepare': function() {
+                  this.options.parameters = { image: this.aggregateParameters.second}
+              }
+          },
           timeout: 200,
       }),
 
       // Fixation
       new lab.html.Screen({
+          title: 'fix2',
           contentUrl: 'pages/fixation.html',
           parameters: {
               color: 'gray',
@@ -88,51 +95,60 @@ var trialTemplate = new lab.flow.Sequence({
           // so that we can recognize it more easily
           // in the dataset.
           title: 'stimC',
-          // Again, we use the trial page template
-          content: '<main class="content-vertical-center content-horizontal-center">' +
-              '<div><img src=${ parameters.third }></div></main>',
+          contentUrl: 'pages/trial.html',
+          // content: '<main class="content-vertical-center content-horizontal-center">' +
+          //     '<div><img src=${ parameters.third }></div></main>',
           timeout: 200,
-      }),
-      // Record response
-      new lab.html.Screen({
-          contentUrl: 'pages/fixation.html',
-          parameters: {
-              word: 'Was the third image the same as first (f) or second (j)?',
-          },
-          datacommit: false,
-          // we need to set the correct response by hand
-          responses: {
-              'keypress(f)': true,
-              'keypress(j)': false,
-          },
           messageHandlers: {
               'before:prepare': function() {
                   // Set the correct response
                   // before the component is prepared
-                  this.options.correctResponse = ('${ parameters.useFirst }')
-              },
+                  if (this.aggregateParameters.third == 'first'){
+                      this.options.parameters = { image: this.aggregateParameters.first}
+                  } else {
+                      this.options.parameters = { image: this.aggregateParameters.second}
+                  }
+              }
           },
-          // no timeout
-          // timout: 500
       }),
-
-      new lab.html.Screen({
-          contentUrl: 'pages/fixation.html',
-          parameters: {
+    // Record response
+    new lab.html.Screen({
+        title: 'response',
+        contentUrl: 'pages/fixation.html',
+        parameters: {
+              word: 'Was the third image the same as first (f) or second (j)?',
+        },
+        // we need to set the correct response by hand
+        responses: {
+            'keypress(f)': 'first',
+            'keypress(j)': 'second',
+        },
+        messageHandlers: {
+            'before:prepare': function() {
+                // Set the correct response
+                // before the component is prepared
+                this.options.correctResponse = this.aggregateParameters.third
+            },
+        },
+        // no timeout
+        // timout: 500
+    }),
+    new lab.html.Screen({
+        contentUrl: 'pages/fixation.html',
+        parameters: {
               word: '',
           },
-          datacommit: false,
-          // Because feedback can only be given after
-          // the choice has been recorded, this component
-          // is prepared at the last possible moment.
-          tardy: true,
-          // Generate feedback
-          messageHandlers: {
-              'before:prepare': function() {
+        datacommit: false,
+        // Because feedback can only be given after
+        // the choice has been recorded, this component
+        // is prepared at the last possible moment.
+        tardy: true,
+        // Generate feedback
+        messageHandlers: {
+            'before:prepare': function() {
                   if (this.aggregateParameters.feedback) {
                       // Generate feedback if requested
                       this.options.timeout = 1000
-
                       // First, check if the participant responded in time at all
                       if (this.options.datastore.state['ended_on'] === 'response') {
                           // If there is a response, check its veracity
@@ -150,8 +166,8 @@ var trialTemplate = new lab.flow.Sequence({
                       this.options.timeout = 500
                   }
               }
-          },
-      }),
+        },
+    }),
   ]
 })
 
@@ -159,10 +175,10 @@ var trialTemplate = new lab.flow.Sequence({
 var trials = [
     { first: 'media/test_image_1.png',
       second: 'media/test_image_2.jpg',
-      useFirst: true},
+      third: 'first'},
     { first: 'media/test_image_1.png',
-      second: 'media/test_image_2.png',
-      useFirst: false},
+      second: 'media/test_image_2.jpg',
+      third: 'second'},
 ]
 
 // With the individual components in place,
