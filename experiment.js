@@ -185,7 +185,48 @@ var trials = [
       third: 'second'},
 ]
 
-
+var scaleScreen = function (delta) {
+    var s = new lab.html.Screen({
+        contentUrl: 'pages/verify.html',
+        parameters: {size : 500 + delta},
+        responses: {
+            'keypress(f)': 'grow',
+            'keypress(j)': 'shrink',
+            'keypress(Space)': 'done'
+        },
+    });
+    return s
+}
+var verifySubject = new lab.flow.Sequence({
+    parameters: {
+        delta: 0
+    },
+    content : [
+        // first response
+        scaleScreen(0),
+        // adjust based off user input
+        new lab.flow.Sequence({
+            messageHandlers: {
+                'before:prepare': function() {
+                    if (this.options.datastore.state['response'] == 'grow') {
+                        this.aggregateParameters.delta += 10;
+                        this.options.content = [
+                            scaleScreen(this.aggregateParameters.delta)
+                        ];
+                    } else if (this.options.datastore.state['response'] == 'shrink') {
+                        this.aggregateParameters.delta -= 10;
+                        this.options.content = [
+                            scaleScreen(this.aggregateParameters.delta)
+                        ];
+                    } else {
+                        this.options.content = [new lab.html.Screen({
+                            contentUrl:'pages/fixation.html'})];
+                    }
+                }
+            },
+        })
+    ]
+})
 // With the individual components in place,
 // now put together the entire experiment
 var experiment = new lab.flow.Sequence({
@@ -206,7 +247,6 @@ var experiment = new lab.flow.Sequence({
         }),
         // Prompt to see if the screen is large enough
         new lab.html.Screen({
-            timeout: 10000,
             title: 'verify',
             contentUrl: 'pages/verify.html',
             responses: {
