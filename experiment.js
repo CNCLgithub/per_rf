@@ -187,8 +187,9 @@ var trials = [
 
 var scaleScreen = function (delta) {
     var s = new lab.html.Screen({
-        contentUrl: 'pages/verify.html',
+        title: 'presentation',
         parameters: {size : 500 + delta},
+        contentUrl: 'pages/verify.html',
         responses: {
             'keypress(f)': 'grow',
             'keypress(j)': 'shrink',
@@ -206,8 +207,9 @@ var verifySubject = new lab.flow.Sequence({
         scaleScreen(0),
         // adjust based off user input
         new lab.flow.Sequence({
+            title: 'process-Scale',
             messageHandlers: {
-                'before:prepare': function() {
+                'end': function() {
                     if (this.options.datastore.state['response'] == 'grow') {
                         this.aggregateParameters.delta += 10;
                         this.options.content = [
@@ -218,7 +220,7 @@ var verifySubject = new lab.flow.Sequence({
                         this.options.content = [
                             scaleScreen(this.aggregateParameters.delta)
                         ];
-                    } else {
+                    } else if (this.options.datastore.state['response'] == 'done'){
                         this.options.content = [new lab.html.Screen({
                             contentUrl:'pages/fixation.html'})];
                     }
@@ -246,19 +248,22 @@ var experiment = new lab.flow.Sequence({
           },
         }),
         // Prompt to see if the screen is large enough
-        new lab.html.Screen({
-            title: 'verify',
-            contentUrl: 'pages/verify.html',
-            responses: {
-                'keypress(y)': 'pass',
-                'keypress(n)': 'fail'
-            },
-            messageHandlers: {
-                'before:prepare': function() {
-                    this.options.correctResponse = 'pass'
-                }
-            },
+        new lab.flow.Sequence({
+            content: [verifySubject]
         }),
+        // new lab.html.Screen({
+        //     title: 'verify',
+        //     contentUrl: 'pages/verify.html',
+        //     responses: {
+        //         'keypress(y)': 'pass',
+        //         'keypress(n)': 'fail'
+        //     },
+        //     messageHandlers: {
+        //         'before:prepare': function() {
+        //             this.options.correctResponse = 'pass'
+        //         }
+        //     },
+        // }),
         // run the experiment
         new lab.flow.Loop({ template: trialTemplate,
                             templateParameters: trials,
