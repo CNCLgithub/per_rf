@@ -12,6 +12,10 @@
 // 5) A response screen
 // 6) Optionally, display response feedback
 
+// Get the client's screen size and scale the images to preserve
+// eccentricity
+
+
 var trialTemplate = new lab.flow.Sequence({
   datacommit: false,
   content: [
@@ -181,54 +185,47 @@ var trials = [
       third: 'second'},
 ]
 
+
 // With the individual components in place,
 // now put together the entire experiment
 var experiment = new lab.flow.Sequence({
     content: [
         // Initial instructions
-          new lab.html.Screen({
-              contentUrl: 'pages/1-welcome.html',
-              responses: {
-                  'keypress(Space)': 'continue'
+        new lab.html.Screen({
+            contentUrl: 'pages/1-welcome.html',
+            responses: {
+                'keypress(Space)': 'continue'
               },
-          }),
+        }),
         // Instruction summary
         new lab.html.Screen({
-          contentUrl: 'pages/2-summary.html',
-          responses: {
-            'keypress(Space)': 'continue'
+            contentUrl: 'pages/2-summary.html',
+            responses: {
+                'keypress(Space)': 'continue'
           },
         }),
-        // Practice trials
-        // new lab.html.Screen({
-        //     // This screen is assigned a title,
-        //     // so that we can recognize it more easily
-        //     // in the dataset.
-        //     title: 'stimA',
-        //     // Again, we use the trial page template
-        //     contentUrl: 'pages/trial.html',
-        //     parameters: {
-        //         media: '${ parameters.first }', // parameters substituted ...
-        //         weight: 'bold',
-        //     },
-        //     timeout: 100,
-        // }),
-        // // Interlude
-        // new lab.html.Screen({
-        //     contentUrl: 'pages/4-interlude.html',
-        //     responses: {
-        //         'keypress(Space)': 'continue',
-        //     },
-        // }),
-        // Actual trials
-        new lab.flow.Loop({
-            template: trialTemplate,
-            templateParameters: trials,
-            shuffle: true,
-            parameters: {
-                feedback: false,
+        // Prompt to see if the screen is large enough
+        new lab.html.Screen({
+            timeout: 10000,
+            title: 'verify',
+            contentUrl: 'pages/verify.html',
+            responses: {
+                'keypress(y)': 'pass',
+                'keypress(n)': 'fail'
+            },
+            messageHandlers: {
+                'before:prepare': function() {
+                    this.options.correctResponse = 'pass'
+                }
             },
         }),
+        // run the experiment
+        new lab.flow.Loop({ template: trialTemplate,
+                            templateParameters: trials,
+                            shuffle: true,
+                            parameters: {
+                                feedback: false,
+                            }}),
         // Thank-you page
         new lab.html.Screen({
             contentUrl: 'pages/5-thanks.html',
