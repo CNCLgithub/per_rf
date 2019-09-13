@@ -9,7 +9,7 @@ var EXPERIMENT_TRIALS =
         "first": "../media/reference_imgs/01.png",
         "second": "../media/metamer_imgs/01_s0.3_a2_o0.5_iter_50.png",
         "third": "second"
-    },PRACTICE
+    },
     {
         "first": "../media/metamer_imgs/01_s0.3_a2_o0.5_iter_50.png",
         "second": "../media/reference_imgs/01.png",
