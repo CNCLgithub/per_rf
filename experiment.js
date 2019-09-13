@@ -173,16 +173,6 @@ var trialTemplate = new lab.flow.Sequence({
   ]
 })
 
-// Define the trials in terms of the central parameters:
-var exp_trials;
-var par_trials;
-$.getJSON("trial_setup/experiment_trials.json", function(json) {
-    exp_trials = json
-});
-$.getJSON("trial_setup/practice_trials.json", function(json) {
-    par_trials = json;
-});
-
 
 var scaleScreen = function (delta) {
     var s = new lab.html.Screen({
@@ -263,11 +253,33 @@ var experiment = new lab.flow.Sequence({
                 'keypress(Space)': 'continue'
             },
         }),
+        new lab.html.Screen({
+            contentUrl: 'pages/before-practice.html',
+            responses: {
+                'keypress(Space)': 'continue'
+            },
+        }),
+        // practice trials
+        new lab.flow.Loop({
+            template: trialTemplate,
+            templateParameters: PRACTICE_TRIALS,
+            shuffle: true,
+            parameters: {
+                feedback: false,
+            }
+        }),
+        new lab.html.Screen({
+            contentUrl: 'pages/4-interlude.html',
+            responses: {
+                'keypress(Space)': 'continue'
+            },
+        }),
+
         // run the experiment
         new lab.flow.Loop({
             template: new lab.flow.Loop({
                 template: trialTemplate,
-                templateParameters: PRACTICE_TRIALS,
+                templateParameters: EXPERIMENT_TRIALS,
                 shuffle: true,
                 parameters: {
                     feedback: false,
