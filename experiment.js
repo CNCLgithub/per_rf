@@ -281,12 +281,16 @@ var experiment = new lab.flow.Sequence({
             },
         }),
         // run the experiment
-        new lab.flow.Loop({ template: trialTemplate,
-                            templateParameters: trials,
-                            shuffle: true,
-                            parameters: {
-                                feedback: false,
-                            }}),
+        new lab.flow.Loop({
+            template: new lab.flow.Loop({
+                template: trialTemplate,
+                templateParameters: trials,
+                shuffle: true,
+                parameters: {
+                    feedback: false,
+                }}),
+            templateParameters: new Array(5),
+        }),
         // Thank-you page
         new lab.html.Screen({
             contentUrl: 'pages/5-thanks.html',
