@@ -15,7 +15,7 @@
 // Get the client's screen size and scale the images to preserve
 // eccentricity
 
-var IMAGE_WIDTH;
+var IMAGE_WIDTH = 500;
 
 var trialTemplate = new lab.flow.Sequence({
   datacommit: false,
