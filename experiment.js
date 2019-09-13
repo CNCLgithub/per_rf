@@ -41,6 +41,7 @@ var trialTemplate = new lab.flow.Sequence({
           // so that we can recognize it more easily
           // in the dataset.
           title: 'stimA',
+          tardy: true,
           contentUrl: 'pages/trial.html',
           messageHandlers: {
               'before:prepare': function() {
@@ -73,6 +74,7 @@ var trialTemplate = new lab.flow.Sequence({
           // so that we can recognize it more easily
           // in the dataset.
           title: 'stimB',
+          tardy: true,
           contentUrl: 'pages/trial.html',
           messageHandlers: {
               'before:prepare': function() {
@@ -106,6 +108,7 @@ var trialTemplate = new lab.flow.Sequence({
           // so that we can recognize it more easily
           // in the dataset.
           title: 'stimC',
+          tardy: true,
           contentUrl: 'pages/trial.html',
           // content: '<main class="content-vertical-center content-horizontal-center">' +
           //     '<div><img src=${ parameters.third }></div></main>',
@@ -123,7 +126,6 @@ var trialTemplate = new lab.flow.Sequence({
                       this.options.parameters = {
                           image_width: IMAGE_WIDTH,
                           image: this. aggregateParameters.second
-
                       }
                   }
               }
@@ -232,7 +234,8 @@ var scaleLogic = new lab.flow.Sequence({
                                     scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
                                 ];
                             } else if (this.options.datastore.state['response'] == 'done'){
-                                IMAGE_WIDTH = 3 * (IMAGE_WIDTH + this.parameters.delta[this.parameters.delta.length-1])
+                                IMAGE_WIDTH = 3 * (500 + this.parameters.delta[this.parameters.delta.length-1])
+                                console.log(IMAGE_WIDTH)
                             }
                         }
                     },
