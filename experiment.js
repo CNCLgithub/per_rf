@@ -15,7 +15,7 @@
 // Get the client's screen size and scale the images to preserve
 // eccentricity
 
-var IMAGE_WIDTH = 500;
+var IMAGE_WIDTH;
 
 var trialTemplate = new lab.flow.Sequence({
   datacommit: false,
@@ -232,7 +232,7 @@ var scaleLogic = new lab.flow.Sequence({
                                     scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
                                 ];
                             } else if (this.options.datastore.state['response'] == 'done'){
-                                IMAGE_WIDTH = this.parameters.delta
+                                IMAGE_WIDTH = 3 * (IMAGE_WIDTH + this.parameters.delta[this.parameters.delta.length-1])
                             }
                         }
                     },
