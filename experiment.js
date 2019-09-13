@@ -234,8 +234,7 @@ var scaleLogic = new lab.flow.Sequence({
                                     scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
                                 ];
                             } else if (this.options.datastore.state['response'] == 'done'){
-                                IMAGE_WIDTH = 3 * (500 + this.parameters.delta[this.parameters.delta.length-1])
-                                console.log(IMAGE_WIDTH)
+                                IMAGE_WIDTH = 1.9 * (500 + this.parameters.delta[this.parameters.delta.length-1])
                             }
                         }
                     },
