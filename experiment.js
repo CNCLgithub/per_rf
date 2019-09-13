@@ -15,6 +15,7 @@
 // Get the client's screen size and scale the images to preserve
 // eccentricity
 
+var IMAGE_WIDTH = 500;
 
 var trialTemplate = new lab.flow.Sequence({
   datacommit: false,
@@ -45,7 +46,7 @@ var trialTemplate = new lab.flow.Sequence({
               'before:prepare': function() {
                   this.options.parameters = {
                       image: this.aggregateParameters.first,
-                      size: image_size
+                      image_width: IMAGE_WIDTH
                   }
               }
           },
@@ -77,7 +78,7 @@ var trialTemplate = new lab.flow.Sequence({
               'before:prepare': function() {
                   this.options.parameters = {
                       image: this.aggregateParameters.second,
-                      size: image_size
+                      image_width: IMAGE_WIDTH
                   }
               }
           },
@@ -115,13 +116,14 @@ var trialTemplate = new lab.flow.Sequence({
                   // before the component is prepared
                   if (this.aggregateParameters.third == 'first'){
                       this.options.parameters = {
-                          image: this.aggregateParameters.first,
-                          size: image_size
+                          image_width: IMAGE_WIDTH,
+                          image: this. aggregateParameters.first
                       }
                   } else {
                       this.options.parameters = {
-                          image: this.aggregateParameters.second,
-                          size: image_size
+                          image_width: IMAGE_WIDTH,
+                          image: this. aggregateParameters.second
+
                       }
                   }
               }
@@ -197,15 +199,7 @@ var trials = [
       third: 'second'},
 ]
 
-//we need this for lab.js to execute the loop; we need to give some max size here which will correspond to max number of adjustments subjects can make, which is plausible.
-var dummy_deltas = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0
-]
-
-var image_size;
-
 var scaleScreen = function (delta) {
-    
     var s = new lab.html.Screen({
         tardy: true,
         title: 'presentation',
@@ -219,36 +213,33 @@ var scaleScreen = function (delta) {
     });
     return s
 }
-var verifySubject = new lab.flow.Sequence({
+var scaleLogic = new lab.flow.Sequence({
     tardy: true,
     content: [
         new lab.flow.Sequence({
             title: 'process-Scale',
             // adjust based off user input
-            messageHandlers: {
-                'before:prepare': function() {
-                    if (this.options.datastore.state['response'] == 'grow') {
-                        console.log('GROW')
-                        this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] + 20);
-                        this.options.content = [
-                            scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
-                        ];
-                    } else if (this.options.datastore.state['response'] == 'shrink') {
-                        this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] - 20);
-                        this.options.content = [
-                            scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
-                        ];
-                    } else if (this.options.datastore.state['response'] == 'done'){
-                        dummy_deltas = []
-                        image_size = 3 * (500 + this.parameters.delta[this.parameters.delta.length-1])
-                        console.log(image_size)
-                    }
-                }
-            },
+                    messageHandlers: {
+                        'before:prepare': function() {
+                            if (this.options.datastore.state['response'] == 'grow') {
+                                this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] + 10);
+                                this.options.content = [
+                                    scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
+                                ];
+                            } else if (this.options.datastore.state['response'] == 'shrink') {
+                                this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] - 10);
+                                this.options.content = [
+                                    scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
+                                ];
+                            } else if (this.options.datastore.state['response'] == 'done'){
+                                IMAGE_WIDTH = this.parameters.delta
+                            }
+                        }
+                    },
+
         }),
     ]
-
-});
+})
 // With the individual components in place,
 // now put together the entire experiment
 var experiment = new lab.flow.Sequence({
@@ -268,39 +259,18 @@ var experiment = new lab.flow.Sequence({
           },
         }),
         // Prompt to see if the screen is large enough
-        new lab.html.Screen({
-            tardy: true,
-            title: 'presentation',
-            parameters: {size : 500},
-            contentUrl: 'pages/verify.html',
-            responses: {
-                'keypress(f)': 'grow',
-                'keypress(j)': 'shrink',
-                'keypress(Space)': 'done'
-            },
-        }),
-        
-        new lab.flow.Loop({
-            parameters: {
-                delta: [0]
-            },
-            template: verifySubject,
-            templateParameters: dummy_deltas,
-        }),
-
-        // new lab.html.Screen({
-        //     title: 'verify',
-        //     contentUrl: 'pages/verify.html',
-        //     responses: {
-        //         'keypress(y)': 'pass',
-        //         'keypress(n)': 'fail'
-        //     },
-        //     messageHandlers: {
-        //         'before:prepare': function() {
-        //             this.options.correctResponse = 'pass'
-        //         }
-        //     },
-        // }),
+        new lab.flow.Sequence({
+            content: [
+                scaleScreen(0),
+                new lab.flow.Loop({
+                    parameters: {
+                        delta: [0]
+                    },
+                    template: scaleLogic,
+                    templateParameters: new Array(100),
+                }),
+            ]
+        }), 
         // run the experiment
         new lab.flow.Loop({ template: trialTemplate,
                             templateParameters: trials,
