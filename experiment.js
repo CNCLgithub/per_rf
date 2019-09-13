@@ -43,7 +43,10 @@ var trialTemplate = new lab.flow.Sequence({
           contentUrl: 'pages/trial.html',
           messageHandlers: {
               'before:prepare': function() {
-                  this.options.parameters = { image: this.aggregateParameters.first}
+                  this.options.parameters = {
+                      image: this.aggregateParameters.first,
+                      size: image_size
+                  }
               }
           },
           timeout: 200,
@@ -72,7 +75,10 @@ var trialTemplate = new lab.flow.Sequence({
           contentUrl: 'pages/trial.html',
           messageHandlers: {
               'before:prepare': function() {
-                  this.options.parameters = { image: this.aggregateParameters.second}
+                  this.options.parameters = {
+                      image: this.aggregateParameters.second,
+                      size: image_size
+                  }
               }
           },
           timeout: 200,
@@ -108,9 +114,15 @@ var trialTemplate = new lab.flow.Sequence({
                   // Set the correct response
                   // before the component is prepared
                   if (this.aggregateParameters.third == 'first'){
-                      this.options.parameters = { image: this.aggregateParameters.first}
+                      this.options.parameters = {
+                          image: this.aggregateParameters.first,
+                          size: image_size
+                      }
                   } else {
-                      this.options.parameters = { image: this.aggregateParameters.second}
+                      this.options.parameters = {
+                          image: this.aggregateParameters.second,
+                          size: image_size
+                      }
                   }
               }
           },
@@ -188,7 +200,9 @@ var trials = [
 //we need this for lab.js to execute the loop; we need to give some max size here which will correspond to max number of adjustments subjects can make, which is plausible.
 var dummy_deltas = [
     0, 0, 0, 0, 0, 0, 0, 0, 0
-    ]
+]
+
+var image_size;
 
 var scaleScreen = function (delta) {
     
@@ -215,17 +229,19 @@ var verifySubject = new lab.flow.Sequence({
                 'before:prepare': function() {
                     if (this.options.datastore.state['response'] == 'grow') {
                         console.log('GROW')
-                        this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] + 10);
+                        this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] + 20);
                         this.options.content = [
                             scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
                         ];
                     } else if (this.options.datastore.state['response'] == 'shrink') {
-                        this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] - 10);
+                        this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] - 20);
                         this.options.content = [
                             scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
                         ];
                     } else if (this.options.datastore.state['response'] == 'done'){
                         dummy_deltas = []
+                        image_size = 3 * (500 + this.parameters.delta[this.parameters.delta.length-1])
+                        console.log(image_size)
                     }
                 }
             },
@@ -271,6 +287,7 @@ var experiment = new lab.flow.Sequence({
             template: verifySubject,
             templateParameters: dummy_deltas,
         }),
+
         // new lab.html.Screen({
         //     title: 'verify',
         //     contentUrl: 'pages/verify.html',
