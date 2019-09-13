@@ -187,6 +187,18 @@ var scaleLogic = new lab.flow.Sequence({
     ]
 })
 
+function GoInFullscreen(element) {
+    if(element.requestFullscreen)
+        element.requestFullscreen();
+    else if(element.mozRequestFullScreen)
+        element.mozRequestFullScreen();
+    else if(element.webkitRequestFullscreen)
+        element.webkitRequestFullscreen();
+    else if(element.msRequestFullscreen)
+        element.msRequestFullscreen();
+}
+
+
 var trial_epoch = new lab.flow.Sequence({
     content: [
         new lab.flow.Loop({
@@ -216,10 +228,17 @@ var experiment = new lab.flow.Sequence({
     content: [
         // Initial instructions
         new lab.html.Screen({
+            tardy: true,
             contentUrl: 'pages/1-welcome.html',
             responses: {
                 'keypress(Space)': 'continue'
-              },
+            },
+            messageHandlers: {
+                'end': function() {
+                    GoInFullscreen(document.getElementById("experiment"));
+                },
+            },
+
         }),
         // Prompt to see if the screen is large enough
         new lab.flow.Sequence({
