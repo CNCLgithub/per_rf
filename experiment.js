@@ -251,13 +251,6 @@ var experiment = new lab.flow.Sequence({
                 'keypress(Space)': 'continue'
               },
         }),
-        // Instruction summary
-        new lab.html.Screen({
-            contentUrl: 'pages/2-summary.html',
-            responses: {
-                'keypress(Space)': 'continue'
-          },
-        }),
         // Prompt to see if the screen is large enough
         new lab.flow.Sequence({
             content: [
@@ -270,7 +263,21 @@ var experiment = new lab.flow.Sequence({
                     templateParameters: new Array(100),
                 }),
             ]
-        }), 
+        }),
+        // Instruction summary
+        new lab.html.Screen({
+            contentUrl: 'pages/2-describe-task.html',
+            responses: {
+                'keypress(Space)': 'continue'
+            },
+        }),
+        // Instruction summary
+        new lab.html.Screen({
+            contentUrl: 'pages/3-summary.html',
+            responses: {
+                'keypress(Space)': 'continue'
+            },
+        }),
         // run the experiment
         new lab.flow.Loop({ template: trialTemplate,
                             templateParameters: trials,
