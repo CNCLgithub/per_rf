@@ -174,14 +174,15 @@ var trialTemplate = new lab.flow.Sequence({
 })
 
 // Define the trials in terms of the central parameters:
-var trials = [
-    { first: 'media/test_image_1.png',
-      second: 'media/test_image_2.jpg',
-      third: 'first'},
-    { first: 'media/test_image_1.png',
-      second: 'media/test_image_2.jpg',
-      third: 'second'},
-]
+var trials = require('trials.json'); //(with path)
+// var trials = [
+//     { first: 'media/test_image_1.png',
+//       second: 'media/test_image_2.jpg',
+//       third: 'first'},
+//     { first: 'media/test_image_1.png',
+//       second: 'media/test_image_2.jpg',
+//       third: 'second'},
+// ]
 
 var scaleScreen = function (delta) {
     var s = new lab.html.Screen({
