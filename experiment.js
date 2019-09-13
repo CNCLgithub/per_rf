@@ -17,24 +17,31 @@
 
 var IMAGE_WIDTH = 500;
 
+var presentFixation = function (timeout) {
+    var s = new lab.html.Screen({
+        title: 'fixation',
+        tardy: true,
+        contentUrl: 'pages/trial.html',
+        parameters: {
+            image: 'media/mask.png',
+        },
+        // Don't log data from this screen
+        datacommit: false,
+        messageHandlers: {
+            'before:prepare': function() {
+                this.options.parameters.image_width = IMAGE_WIDTH
+            }
+        },
+        timeout: timeout,
+    });
+    return s;
+}
+
 var trialTemplate = new lab.flow.Sequence({
   datacommit: false,
   content: [
-
-    // Fixation cross
-      new lab.html.Screen({
-          title: 'fix1',
-          contentUrl: 'pages/fixation.html',
-          parameters: {
-              color: 'gray',
-              word: '+',
-              weight: 'normal',
-          },
-          // Don't log data from this screen
-        datacommit: false,
-          timeout: 1000,
-      }),
-
+      // Fixation cross
+      presentFixation(1000),
       // First Image
       new lab.html.Screen({
         // This screen is assigned a title,
@@ -55,18 +62,7 @@ var trialTemplate = new lab.flow.Sequence({
       }),
 
       // Fixation
-      new lab.html.Screen({
-          contentUrl: 'pages/fixation.html',
-          parameters: {
-              color: 'gray',
-              word: '+',
-              weight: 'normal',
-          },
-          // Don't log data from this screen
-          datacommit: false,
-          // Display the fixation cross for 500ms
-          timeout: 500,
-      }),
+      presentFixation(1000),
 
       // Second Image
       new lab.html.Screen({
@@ -86,22 +82,8 @@ var trialTemplate = new lab.flow.Sequence({
           },
           timeout: 200,
       }),
-
       // Fixation
-      new lab.html.Screen({
-          title: 'fix2',
-          contentUrl: 'pages/fixation.html',
-          parameters: {
-              color: 'gray',
-              word: '+',
-              weight: 'normal',
-          },
-          // Don't log data from this screen
-          datacommit: false,
-          // Display the fixation cross for 500ms
-          timeout: 1000,
-      }),
-
+      presentFixation(1000),
       // Third Image
       new lab.html.Screen({
           // This screen is assigned a title,
