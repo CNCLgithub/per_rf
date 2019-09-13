@@ -123,6 +123,7 @@ var trialTemplate = new lab.flow.Sequence({
                       this.options.parameters = {
                           image_width: IMAGE_WIDTH,
                           image: this. aggregateParameters.second
+
                       }
                   }
               }
@@ -235,6 +236,7 @@ var scaleLogic = new lab.flow.Sequence({
                             }
                         }
                     },
+
         }),
     ]
 })
@@ -268,7 +270,7 @@ var experiment = new lab.flow.Sequence({
                     templateParameters: new Array(100),
                 }),
             ]
-        }),
+        }), 
         // run the experiment
         new lab.flow.Loop({ template: trialTemplate,
                             templateParameters: trials,
