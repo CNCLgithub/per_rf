@@ -185,8 +185,15 @@ var trials = [
       third: 'second'},
 ]
 
+//we need this for lab.js to execute the loop; we need to give some max size here which will correspond to max number of adjustments subjects can make, which is plausible.
+var dummy_deltas = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0
+    ]
+
 var scaleScreen = function (delta) {
+    
     var s = new lab.html.Screen({
+        tardy: true,
         title: 'presentation',
         parameters: {size : 500 + delta},
         contentUrl: 'pages/verify.html',
@@ -199,36 +206,33 @@ var scaleScreen = function (delta) {
     return s
 }
 var verifySubject = new lab.flow.Sequence({
-    parameters: {
-        delta: 0
-    },
-    content : [
-        // first response
-        scaleScreen(0),
-        // adjust based off user input
+    tardy: true,
+    content: [
         new lab.flow.Sequence({
             title: 'process-Scale',
+            // adjust based off user input
             messageHandlers: {
-                'end': function() {
+                'before:prepare': function() {
                     if (this.options.datastore.state['response'] == 'grow') {
-                        this.aggregateParameters.delta += 10;
+                        console.log('GROW')
+                        this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] + 10);
                         this.options.content = [
-                            scaleScreen(this.aggregateParameters.delta)
+                            scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
                         ];
                     } else if (this.options.datastore.state['response'] == 'shrink') {
-                        this.aggregateParameters.delta -= 10;
+                        this.parameters.delta.push(this.parameters.delta[this.parameters.delta.length-1] - 10);
                         this.options.content = [
-                            scaleScreen(this.aggregateParameters.delta)
+                            scaleScreen(this.parameters.delta[this.parameters.delta.length-1])
                         ];
                     } else if (this.options.datastore.state['response'] == 'done'){
-                        this.options.content = [new lab.html.Screen({
-                            contentUrl:'pages/fixation.html'})];
+                        dummy_deltas = []
                     }
                 }
             },
-        })
+        }),
     ]
-})
+
+});
 // With the individual components in place,
 // now put together the entire experiment
 var experiment = new lab.flow.Sequence({
@@ -248,8 +252,24 @@ var experiment = new lab.flow.Sequence({
           },
         }),
         // Prompt to see if the screen is large enough
-        new lab.flow.Sequence({
-            content: [verifySubject]
+        new lab.html.Screen({
+            tardy: true,
+            title: 'presentation',
+            parameters: {size : 500},
+            contentUrl: 'pages/verify.html',
+            responses: {
+                'keypress(f)': 'grow',
+                'keypress(j)': 'shrink',
+                'keypress(Space)': 'done'
+            },
+        }),
+        
+        new lab.flow.Loop({
+            parameters: {
+                delta: [0]
+            },
+            template: verifySubject,
+            templateParameters: dummy_deltas,
         }),
         // new lab.html.Screen({
         //     title: 'verify',
