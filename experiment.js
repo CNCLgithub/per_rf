@@ -174,15 +174,15 @@ var trialTemplate = new lab.flow.Sequence({
 })
 
 // Define the trials in terms of the central parameters:
-var trials = require('trials.json'); //(with path)
-// var trials = [
-//     { first: 'media/test_image_1.png',
-//       second: 'media/test_image_2.jpg',
-//       third: 'first'},
-//     { first: 'media/test_image_1.png',
-//       second: 'media/test_image_2.jpg',
-//       third: 'second'},
-// ]
+var exp_trials;
+var par_trials;
+$.getJSON("trial_setup/experiment_trials.json", function(json) {
+    exp_trials = json
+});
+$.getJSON("trial_setup/practice_trials.json", function(json) {
+    par_trials = json;
+});
+
 
 var scaleScreen = function (delta) {
     var s = new lab.html.Screen({
@@ -265,13 +265,19 @@ var experiment = new lab.flow.Sequence({
         }),
         // run the experiment
         new lab.flow.Loop({
+            tardy: true,
             template: new lab.flow.Loop({
                 template: trialTemplate,
-                templateParameters: trials,
+                // templateParameters: par_trials,
                 shuffle: true,
                 parameters: {
                     feedback: false,
                 }}),
+            messageHandlers : {
+                'before:prepare' : function () {
+                    this.options.templateParameters = par_trials
+                }
+            },
             templateParameters: new Array(5),
         }),
         // Thank-you page

@@ -1,8 +1,8 @@
 import json
 from os.path import join
 
-ref_dir = '../media/reference_imgs'
-metamer_dir = '../media/metamer_imgs'
+ref_dir = 'media/reference_imgs'
+metamer_dir = 'media/metamer_imgs'
 
 imgs = range(1, 6+1)
 scales = [0.3, 0.4, 0.5, 0.6, 0.7]

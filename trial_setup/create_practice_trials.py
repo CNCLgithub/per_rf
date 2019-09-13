@@ -2,14 +2,14 @@ import json
 from os.path import join
 from random import shuffle, choice
 
-img_source_dir = '../media'
+img_source_dir = 'media'
 
 imgs = [7, 8]
 scale_pairs = [[0.3, 0.4],  # 0 means original
                [0.3, 0.5]]
 
 # create the trial list
-data = {'trials': []}
+data = []
 
 for img in imgs:
     for scale_pair in scale_pairs:
@@ -18,9 +18,9 @@ for img in imgs:
             third = 'first'
         else:
             third = 'second'
-        data['trials'].append({'first': join(img_source_dir, 'metamer_imgs/{:02d}_s{:.1f}_a2_o0.5_iter_50.png'.format(img, scale_pair[0])),
+        data.append({'first': join(img_source_dir, 'metamer_imgs/{:02d}_s{:.1f}_a2_o0.5_iter_50.png'.format(img, scale_pair[0])),
                                'second': join(img_source_dir, 'metamer_imgs/{:02d}_s{:.1f}_a2_o0.5_iter_50.png'.format(img, scale_pair[1])),
                                'third': third})
 
 with open('practice_trials.json', 'w') as outfile:
-    json.dump(data, outfile)
+    json.dump(data, outfile, indent = 4)
