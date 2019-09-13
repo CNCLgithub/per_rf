@@ -16,6 +16,7 @@
 // eccentricity
 
 var IMAGE_WIDTH = 500;
+var TRIAL_COUNT = 0;
 
 var presentFixation = function (timeout) {
     var s = new lab.html.Screen({
@@ -30,6 +31,7 @@ var presentFixation = function (timeout) {
         messageHandlers: {
             'before:prepare': function() {
                 this.options.parameters.image_width = IMAGE_WIDTH
+                this.options.parameters.trialIdx = TRIAL_COUNT + 1
             }
         },
         timeout: timeout,
@@ -54,7 +56,8 @@ var trialTemplate = new lab.flow.Sequence({
               'before:prepare': function() {
                   this.options.parameters = {
                       image: this.aggregateParameters.first,
-                      image_width: IMAGE_WIDTH
+                      image_width: IMAGE_WIDTH,
+                      trialIdx: TRIAL_COUNT + 1
                   }
               }
           },
@@ -76,7 +79,8 @@ var trialTemplate = new lab.flow.Sequence({
               'before:prepare': function() {
                   this.options.parameters = {
                       image: this.aggregateParameters.second,
-                      image_width: IMAGE_WIDTH
+                      image_width: IMAGE_WIDTH,
+                      trialIdx: TRIAL_COUNT + 1
                   }
               }
           },
@@ -92,8 +96,6 @@ var trialTemplate = new lab.flow.Sequence({
           title: 'stimC',
           tardy: true,
           contentUrl: 'pages/trial.html',
-          // content: '<main class="content-vertical-center content-horizontal-center">' +
-          //     '<div><img src=${ parameters.third }></div></main>',
           timeout: 200,
           messageHandlers: {
               'before:prepare': function() {
@@ -107,7 +109,8 @@ var trialTemplate = new lab.flow.Sequence({
                   } else {
                       this.options.parameters = {
                           image_width: IMAGE_WIDTH,
-                          image: this. aggregateParameters.second
+                          image: this. aggregateParameters.second,
+                          trialIdx: TRIAL_COUNT +1
                       }
                   }
               }
@@ -115,6 +118,7 @@ var trialTemplate = new lab.flow.Sequence({
       }),
     // Record response
     new lab.html.Screen({
+        tardy: true,
         title: 'response',
         contentUrl: 'pages/fixation.html',
         parameters: {
@@ -129,46 +133,13 @@ var trialTemplate = new lab.flow.Sequence({
             'before:prepare': function() {
                 // Set the correct response
                 // before the component is prepared
-                this.options.correctResponse = this.aggregateParameters.third
+                this.options.correctResponse = this.aggregateParameters.third;
+                this.options.parameters.trialIdx = TRIAL_COUNT + 1;
+                TRIAL_COUNT += 1;
             },
         },
         // no timeout
         // timout: 500
-    }),
-    new lab.html.Screen({
-        contentUrl: 'pages/fixation.html',
-        parameters: {
-              word: '',
-          },
-        datacommit: false,
-        // Because feedback can only be given after
-        // the choice has been recorded, this component
-        // is prepared at the last possible moment.
-        tardy: true,
-        // Generate feedback
-        messageHandlers: {
-            'before:prepare': function() {
-                  if (this.aggregateParameters.feedback) {
-                      // Generate feedback if requested
-                      this.options.timeout = 1000
-                      // First, check if the participant responded in time at all
-                      if (this.options.datastore.state['ended_on'] === 'response') {
-                          // If there is a response, check its veracity
-                          if (this.options.datastore.state['correct'] === true) {
-                              this.options.parameters.word = 'Well done!'
-                          } else {
-                              this.options.parameters.word = 'Please respond as quickly and accurately as you can!'
-                          }
-                      } else {
-                          // If no response was given, poke participants to speed up
-                          this.options.parameters.word = 'Can you go faster?'
-                      }
-                  } else {
-                      // If no feedback is shown, shorten the inter-trial interval
-                      this.options.timeout = 500
-                  }
-              }
-        },
     }),
   ]
 })
@@ -215,6 +186,30 @@ var scaleLogic = new lab.flow.Sequence({
         }),
     ]
 })
+
+var trial_epoch = new lab.flow.Sequence({
+    content: [
+        new lab.flow.Loop({
+            template: trialTemplate,
+            templateParameters: EXPERIMENT_TRIALS,
+            shuffle: true,
+            parameters: {
+                feedback: false,
+            }}),
+        new lab.html.Screen({
+            contentUrl: 'pages/fixation.html',
+            parameters: {
+                word: 'Good job! If you are not done yet, please feel free to take a break now' +
+                    '\n Press space to continue',
+            },
+            responses: {
+                'keypress(Space)': 'continue'
+            },
+            datacommit: false,
+        }),
+    ]
+})
+
 // With the individual components in place,
 // now put together the entire experiment
 var experiment = new lab.flow.Sequence({
@@ -259,6 +254,12 @@ var experiment = new lab.flow.Sequence({
                 'keypress(Space)': 'continue'
             },
         }),
+        // new lab.html.Screen({
+        //     contentUrl: 'pages/full-screen.html',
+        //     responses: {
+        //         'keypress(Space)': 'continue'
+        //     },
+        // }),
         // practice trials
         new lab.flow.Loop({
             template: trialTemplate,
@@ -277,14 +278,9 @@ var experiment = new lab.flow.Sequence({
 
         // run the experiment
         new lab.flow.Loop({
-            template: new lab.flow.Loop({
-                template: trialTemplate,
-                templateParameters: EXPERIMENT_TRIALS,
-                shuffle: true,
-                parameters: {
-                    feedback: false,
-                }}),
-            templateParameters: new Array(5),
+            template: trial_epoch,
+            // 2 epochs
+            templateParameters: new Array(2),
         }),
         // Thank-you page
         new lab.html.Screen({

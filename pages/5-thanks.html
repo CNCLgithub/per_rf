@@ -1,3 +1,19 @@
+<head>
+    <script>
+     /* Get out of full screen */
+     function GoOutFullscreen() {
+	       if(document.exitFullscreen)
+		         document.exitFullscreen();
+	       else if(document.mozCancelFullScreen)
+		         document.mozCancelFullScreen();
+	       else if(document.webkitExitFullscreen)
+		         document.webkitExitFullscreen();
+	       else if(document.msExitFullscreen)
+		         document.msExitFullscreen();
+     }
+		 GoOutFullscreen();
+    </script>
+</head>
 <header class="content-vertical-center content-horizontal-center">
   <div>
     <h1>Thank you!</h1>

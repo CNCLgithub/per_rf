@@ -12,10 +12,45 @@
         <script defer src="trial_setup/experiment_trials.js"></script>
         <script defer src="trial_setup/practice_trials.js"></script>
         <script defer src="experiment.js"></script>
+        <script>
+         /* Get into full screen */
+         function GoInFullscreen() {
+             var element = document.getElementById("experiment");
+             console.log(element);
+	           if(element.requestFullscreen)
+		            element.requestFullscreen();
+	           else if(element.mozRequestFullScreen)
+		             element.mozRequestFullScreen();
+	           else if(element.webkitRequestFullscreen)
+		             element.webkitRequestFullscreen();
+	           else if(element.msRequestFullscreen)
+		             element.msRequestFullscreen();
+            }
+         /* Get out of full screen */
+         function GoOutFullscreen() {
+	           if(document.exitFullscreen)
+		             document.exitFullscreen();
+	           else if(document.mozCancelFullScreen)
+		             document.mozCancelFullScreen();
+	           else if(document.webkitExitFullscreen)
+		             document.webkitExitFullscreen();
+	           else if(document.msExitFullscreen)
+		             document.msExitFullscreen();
+         }
+         /* Is currently in full screen or not */
+         function IsFullScreenCurrently() {
+	           var full_screen_element = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || null;
+	           // If no element is in full-screen
+	           if(full_screen_element === null)
+		             return false;
+	           else
+		             return true;
+         }
+        </script>
     </head>
     <body>
         <div id="dpi" style="height: 1in; width: 1in; left: 100%; position: fixed; top: 100%;"></div>
-        <div data-labjs-section="main" class="container fullscreen">
+        <div id="experiment" data-labjs-section="main" class="container fullscreen">
             <main class="content-vertical-center content-horizontal-center">
                 <div>
                     <img src="lib/loading.svg" alt="loading icon" style="padding: 1rem"><br>
