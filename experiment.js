@@ -273,11 +273,11 @@ var experiment = new lab.flow.Sequence({
                 parameters: {
                     feedback: false,
                 }}),
-            messageHandlers : {
-                'before:prepare' : function () {
-                    this.options.templateParameters = par_trials
-                }
-            },
+            // messageHandlers : {
+            //     'before:prepare' : function () {
+            //         this.options.templateParameters = par_trials
+            //     }
+            // },
             templateParameters: new Array(5),
         }),
         // Thank-you page
