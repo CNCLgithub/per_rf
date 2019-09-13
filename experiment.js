@@ -265,10 +265,9 @@ var experiment = new lab.flow.Sequence({
         }),
         // run the experiment
         new lab.flow.Loop({
-            tardy: true,
             template: new lab.flow.Loop({
                 template: trialTemplate,
-                // templateParameters: par_trials,
+                templateParameters: PRACTICE_TRIALS,
                 shuffle: true,
                 parameters: {
                     feedback: false,
