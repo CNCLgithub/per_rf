@@ -5,12 +5,17 @@
         <title>Experiment</title>
         <!-- lab.js and libraries -->
         <script src="lib/lab.dev.js"></script>
+        <!-- <script src="lib/require.js"></script> -->
+        <script src="lib/jquery-3.4.1.min.js"></script>
         <link rel="stylesheet" href="lib/lab.css">
         <!-- actual experiment code -->
+        <script defer src="trial_setup/experiment_trials.js"></script>
+        <script defer src="trial_setup/practice_trials.js"></script>
         <script defer src="experiment.js"></script>
     </head>
     <body>
-        <div data-labjs-section="main" class="container fullscreen">
+        <div id="dpi" style="height: 1in; width: 1in; left: 100%; position: fixed; top: 100%;"></div>
+        <div id="experiment" data-labjs-section="main" class="container fullscreen">
             <main class="content-vertical-center content-horizontal-center">
                 <div>
                     <img src="lib/loading.svg" alt="loading icon" style="padding: 1rem"><br>
