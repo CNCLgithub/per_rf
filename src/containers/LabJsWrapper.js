@@ -8,6 +8,7 @@ import './LabJsWrapper.css';
 const config = require('../config');
 var _ = require('lodash');
 var qs = require('query-string');
+require('jquery');
 
 
 class LabJsWrapper extends Component {
@@ -34,7 +35,7 @@ class LabJsWrapper extends Component {
           this.addScript(process.env.PUBLIC_URL + '/lib/lab.js', () => {
               // If we add this script tag before lab.js loads, then the
               // script will not be able to find the lab module.
-              this.addScript(process.env.PUBLIC_URL + '/lib/jquery-3.4.1.min.js');
+              // this.addScript(process.env.PUBLIC_URL + '/lib/jquery-3.4.1.min.js');
               this.addScript(process.env.PUBLIC_URL + '/trial_setup/practice_trials.js', () => {
                   this.addScript(process.env.PUBLIC_URL + '/trial_setup/experiment_trials.js', () => {
                       this.addScript(process.env.PUBLIC_URL + '/script.js');
