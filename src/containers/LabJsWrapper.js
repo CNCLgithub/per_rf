@@ -29,14 +29,17 @@ class LabJsWrapper extends Component {
 
       this.surveyUrl = params.survey_url;
 
+      console.log(process.env.PUBLIC_URL);
       if (!_.isUndefined(this.state.encryptedMetadata)) {
           this.addScript(process.env.PUBLIC_URL + '/lib/lab.js', () => {
               // If we add this script tag before lab.js loads, then the
               // script will not be able to find the lab module.
               this.addScript(process.env.PUBLIC_URL + '/lib/jquery-3.4.1.min.js');
-              this.addScript(process.env.PUBLIC_URL + '/trial_setup/practice_trials.js');
-              this.addScript(process.env.PUBLIC_URL + '/trial_setup/experiment_trials.js');
-              this.addScript(process.env.PUBLIC_URL + '/script.js')
+              this.addScript(process.env.PUBLIC_URL + '/trial_setup/practice_trials.js', () => {
+                  this.addScript(process.env.PUBLIC_URL + '/trial_setup/experiment_trials.js', () => {
+                      this.addScript(process.env.PUBLIC_URL + '/script.js');
+                  });
+              });
           });
       }
   }
@@ -105,7 +108,7 @@ class LabJsWrapper extends Component {
   addScript(src, callback) {
     const script = document.createElement("script");
     script.src = src;
-    script.type = "module";
+    script.type = "application/javascript";
     script.onreadystatechange = callback;
     script.onload = callback;
 
