@@ -125,7 +125,6 @@ class LabJsWrapper extends Component {
 
       return (
               <div>
-                  <div id="dpi" style="height: 1in; width: 1in; left: 100%; position: fixed; top: 100%;"></div>
                   <div id="experiment" data-labjs-section="main" class="container fullscreen" style={{visibility: this.state.sendingData ? 'hidden' : 'visible'}}>
                   <main class="content-vertical-center content-horizontal-center">
                       <div>
