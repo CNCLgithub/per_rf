@@ -125,20 +125,21 @@ class LabJsWrapper extends Component {
 
       return (
               <div>
-                  <div id="experiment" data-labjs-section="main" class="container fullscreen" style={{visibility: this.state.sendingData ? 'hidden' : 'visible'}}>
-                  <main class="content-vertical-center content-horizontal-center">
+              <div id="experiment" className="container fullscreen" data-labjs-section="main" style={{visibility: this.state.sendingData ? 'hidden' : 'visible'}}>
+                  <main className="content-vertical-center content-horizontal-center">
                       <div>
                           <h2>Loading Experiment</h2>
                           <p>The experiment is loading and should start in a few seconds</p>
                       </div>
                   </main>
-                  <footer class="content-vertical-center content-horizontal-center">
-                  </footer>
-                      <div className="center" style={{visibility: this.state.sendingData ? 'visible' : 'hidden'}}>
-                           <h2>Saving data... do not exit window</h2>
-                      </div>
-                  </div>
               </div>
+              <div className="center" style={{visibility: this.state.sendingData ? 'visible' : 'hidden'}}>
+              <h2>Saving data... do not exit window</h2>
+              </div>
+              <footer className="content-vertical-center content-horizontal-center">
+              </footer>
+              </div>
+              // </div>
     );
   } // end render
 } // end class
