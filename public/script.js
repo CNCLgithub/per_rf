@@ -137,6 +137,26 @@ var trialTemplate = new lab.flow.Sequence({
                 this.options.parameters.trialIdx = TRIAL_COUNT + 1;
                 TRIAL_COUNT += 1;
             },
+            'after:end': function() {
+                this.state.data.push(
+                    [
+                        // trial id
+                        this.options.datastore.get(''),
+                        // trial idx
+                        this.options.datastore.get(''),
+                        // first
+                        this.options.datastore.get(''),
+                        // second
+                        this.options.datastore.get(''),
+                        // third
+                        this.options.datastore.get(''),
+                        // response
+                        this.options.datastore.get(''),
+                        // rt
+                        this.options.datastore.get(''),
+                    ]
+                )
+            }
         },
         // no timeout
         // timout: 500
@@ -300,6 +320,14 @@ var experiment = new lab.flow.Sequence({
             template: trial_epoch,
             // 2 epochs
             templateParameters: new Array(2),
+            messageHanlders : {
+                "before:prepare" : function anonymous() {
+                    this.state.data = {};
+                }
+                "after:end": function anonymous() {
+                    this.state.finalData = this.state.data;
+                }
+            }
         }),
         // Thank-you page
         new lab.html.Screen({
@@ -307,7 +335,7 @@ var experiment = new lab.flow.Sequence({
             // Respond to clicks on the download button
             events: {
                 'click button#download': function() {
-                    this.options.datastore.download()
+                    // this.options.datastore.download()
                 },
             },
         }),
