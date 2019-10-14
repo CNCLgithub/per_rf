@@ -17,6 +17,7 @@
 
 var IMAGE_WIDTH = 500;
 var TRIAL_COUNT = 0;
+var DATA_RECORD = new Array();
 
 var presentFixation = function (timeout) {
     var s = new lab.html.Screen({
@@ -138,22 +139,21 @@ var trialTemplate = new lab.flow.Sequence({
                 TRIAL_COUNT += 1;
             },
             'after:end': function() {
-                this.state.data.push(
+                DATA_RECORD.push(
                     [
-                        // trial id
-                        this.options.datastore.get(''),
                         // trial idx
-                        this.options.datastore.get(''),
+                        this.options.datastore.get('trialIdx'),
                         // first
-                        this.options.datastore.get(''),
+                        this.options.datastore.get('first'),
                         // second
-                        this.options.datastore.get(''),
+                        this.options.datastore.get('second'),
                         // third
-                        this.options.datastore.get(''),
+                        this.options.datastore.get('third'),
                         // response
-                        this.options.datastore.get(''),
+                        this.options.datastore.get('response'),
+                        this.options.datastore.get('correctResponse'),
                         // rt
-                        this.options.datastore.get(''),
+                        this.options.datastore.get('duration'),
                     ]
                 )
             }
@@ -223,7 +223,7 @@ var trial_epoch = new lab.flow.Sequence({
     content: [
         new lab.flow.Loop({
             template: trialTemplate,
-            templateParameters: EXPERIMENT_TRIALS,
+            templateParameters: EXPERIMENT_TRIALS.slice(1, 3),
             shuffle: true,
             parameters: {
                 feedback: false,
@@ -321,11 +321,11 @@ var experiment = new lab.flow.Sequence({
             // 2 epochs
             templateParameters: new Array(2),
             messageHanlders : {
-                "before:prepare" : function anonymous() {
-                    this.state.data = {};
-                }
+                // "before:prepare" : function anonymous() {
+                //     DATA_RECORD = new Array();
+                // },
                 "after:end": function anonymous() {
-                    this.state.finalData = this.state.data;
+                    this.state.finalData = DATA_RECORD;
                 }
             }
         }),
@@ -333,11 +333,11 @@ var experiment = new lab.flow.Sequence({
         new lab.html.Screen({
             contentUrl: 'pages/5-thanks.html',
             // Respond to clicks on the download button
-            events: {
-                'click button#download': function() {
-                    // this.options.datastore.download()
-                },
-            },
+            // events: {
+            //     'click button#download': function() {
+            //         this.options.datastore.download()
+            //     },
+            // },
         }),
     ],
 })
