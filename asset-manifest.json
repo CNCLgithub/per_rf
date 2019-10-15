@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/PerRF_Task/static/css/main.98a3ada5.chunk.css",
+    "main.js": "/PerRF_Task/static/js/main.fd8a8a7a.chunk.js",
+    "main.js.map": "/PerRF_Task/static/js/main.fd8a8a7a.chunk.js.map",
+    "runtime-main.js": "/PerRF_Task/static/js/runtime-main.f1708e9b.js",
+    "runtime-main.js.map": "/PerRF_Task/static/js/runtime-main.f1708e9b.js.map",
+    "static/js/2.1f32f3a8.chunk.js": "/PerRF_Task/static/js/2.1f32f3a8.chunk.js",
+    "static/js/2.1f32f3a8.chunk.js.map": "/PerRF_Task/static/js/2.1f32f3a8.chunk.js.map",
+    "index.html": "/PerRF_Task/index.html",
+    "precache-manifest.849b5c2ecafaa5c4024706782295eb86.js": "/PerRF_Task/precache-manifest.849b5c2ecafaa5c4024706782295eb86.js",
+    "service-worker.js": "/PerRF_Task/service-worker.js",
+    "static/css/main.98a3ada5.chunk.css.map": "/PerRF_Task/static/css/main.98a3ada5.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f1708e9b.js",
+    "static/js/2.1f32f3a8.chunk.js",
+    "static/css/main.98a3ada5.chunk.css",
+    "static/js/main.fd8a8a7a.chunk.js"
+  ]
+}
