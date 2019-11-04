@@ -293,12 +293,6 @@ var experiment = new lab.flow.Sequence({
                 'keypress(Space)': 'continue'
             },
         }),
-        // new lab.html.Screen({
-        //     contentUrl: 'pages/full-screen.html',
-        //     responses: {
-        //         'keypress(Space)': 'continue'
-        //     },
-        // }),
         // practice trials
         new lab.flow.Loop({
             template: trialTemplate,
@@ -332,12 +326,6 @@ var experiment = new lab.flow.Sequence({
         // Thank-you page
         new lab.html.Screen({
             contentUrl: 'pages/5-thanks.html',
-            // Respond to clicks on the download button
-            // events: {
-            //     'click button#download': function() {
-            //         this.options.datastore.download()
-            //     },
-            // },
         }),
     ],
 })
