@@ -315,9 +315,6 @@ var experiment = new lab.flow.Sequence({
             // 2 epochs
             templateParameters: new Array(2),
             messageHanlders : {
-                // "before:prepare" : function anonymous() {
-                //     DATA_RECORD = new Array();
-                // },
                 "after:end": function anonymous() {
                     this.state.finalData = DATA_RECORD;
                 }
@@ -326,6 +323,10 @@ var experiment = new lab.flow.Sequence({
         // Thank-you page
         new lab.html.Screen({
             contentUrl: 'pages/5-thanks.html',
+            responses: {
+                'keypress(Space)': 'finished'
+            },
+            timeout: 1000,
         }),
     ],
 })
