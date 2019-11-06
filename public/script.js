@@ -355,4 +355,3 @@ experiment.options.datastore = new lab.data.Store()
 // Go!
 // console.log(new lab.plugins.PostMessage())
 experiment.run()
-experiment.end()
