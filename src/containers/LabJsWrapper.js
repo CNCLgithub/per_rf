@@ -32,10 +32,10 @@ class LabJsWrapper extends Component {
 
       console.log(process.env.PUBLIC_URL);
       if (!_.isUndefined(this.state.encryptedMetadata)) {
-          this.addScript(process.env.PUBLIC_URL + '/lib/lab.js', () => {
-              this.addScript(process.env.PUBLIC_URL + '/trial_setup/practice_trials.js', () => {
-                  this.addScript(process.env.PUBLIC_URL + '/trial_setup/experiment_trials.js', () => {
-                      this.addScript(process.env.PUBLIC_URL + '/script.js');
+          this.addScript("module", process.env.PUBLIC_URL + '/lib/lab.js', () => {
+              this.addScript("application/javascript", process.env.PUBLIC_URL + '/trial_setup/practice_trials.js', () => {
+                  this.addScript("application/javascript", process.env.PUBLIC_URL + '/trial_setup/experiment_trials.js', () => {
+                      this.addScript("module", process.env.PUBLIC_URL + '/script.js');
                   });
               });
           });
@@ -103,10 +103,10 @@ class LabJsWrapper extends Component {
 
   }
 
-  addScript(src, callback) {
+    addScript(type, src, callback) {
     const script = document.createElement("script");
     script.src = src;
-    script.type = "application/javascript";
+    script.type = type;
     script.onreadystatechange = callback;
     script.onload = callback;
 
