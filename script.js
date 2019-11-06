@@ -244,22 +244,42 @@ var trial_epoch = new lab.flow.Sequence({
 
 // With the individual components in place,
 // now put together the entire experiment
-var experiment = new lab.flow.Sequence({
-    content: [
-        // Initial instructions
-        new lab.html.Screen({
-            tardy: true,
-            contentUrl: 'pages/1-welcome.html',
-            responses: {
-                'keypress(Space)': 'continue'
-            },
-            messageHandlers: {
-                'end': function() {
-                    GoInFullscreen(document.getElementById("experiment"));
-                },
-            },
+const experiment = lab.util.fromObject({
+    "title": "root",
+    "type": "lab.flow.Sequence",
+    "parameters": {},
+    "plugins": [
+        {
+            "type": "lab.plugins.Metadata"
+        },
+        {
+            "type": "lab.plugins.PostMessage"
+        }
+    ],
+    "metadata": {
+        "title": "",
+        "description": "",
+        "repository": "",
+        "contributors": ""
+    },
+    "files": {},
+    "responses": {},
+})
 
-        }),
+var content = [
+    // Initial instructions
+    new lab.html.Screen({
+        tardy: true,
+        contentUrl: 'pages/1-welcome.html',
+        responses: {
+            'keypress(Space)': 'continue'
+        },
+        messageHandlers: {
+            'end': function() {
+                GoInFullscreen(document.getElementById("experiment"));
+            },
+            },
+    }),
         // Prompt to see if the screen is large enough
         new lab.flow.Sequence({
             content: [
@@ -294,14 +314,14 @@ var experiment = new lab.flow.Sequence({
             },
         }),
         // practice trials
-        new lab.flow.Loop({
-            template: trialTemplate,
-            templateParameters: PRACTICE_TRIALS,
-            shuffle: true,
-            parameters: {
-                feedback: false,
-            }
-        }),
+        // new lab.flow.Loop({
+        //     template: trialTemplate,
+        //     templateParameters: PRACTICE_TRIALS,
+        //     shuffle: true,
+        //     parameters: {
+        //         feedback: false,
+        //     }
+        // }),
         new lab.html.Screen({
             contentUrl: 'pages/4-interlude.html',
             responses: {
@@ -313,7 +333,7 @@ var experiment = new lab.flow.Sequence({
         new lab.flow.Loop({
             template: trial_epoch,
             // 2 epochs
-            templateParameters: new Array(2),
+            templateParameters: new Array(1),
             messageHanlders : {
                 "after:end": function anonymous() {
                     this.state.finalData = DATA_RECORD;
@@ -324,13 +344,15 @@ var experiment = new lab.flow.Sequence({
         new lab.html.Screen({
             contentUrl: 'pages/5-thanks.html',
             responses: {
-                'keypress(Space)': 'finished'
+                'keypress(Space)': 'end'
             },
             timeout: 1000,
         }),
-    ],
-})
+]
+experiment.options.content = content
 // Collect data in a central data store
 experiment.options.datastore = new lab.data.Store()
 // Go!
+// console.log(new lab.plugins.PostMessage())
 experiment.run()
+experiment.end()
