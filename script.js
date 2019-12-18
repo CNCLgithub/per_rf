@@ -19,6 +19,30 @@ var IMAGE_WIDTH = 500;
 var TRIAL_COUNT = 0;
 var DATA_RECORD = new Array();
 
+// With the individual components in place,
+// now put together the entire experiment
+const experiment = lab.util.fromObject({
+    "title": "root",
+    "type": "lab.flow.Sequence",
+    "parameters": {},
+    "plugins": [
+        {
+            "type": "lab.plugins.Metadata"
+        },
+        {
+            "type": "lab.plugins.PostMessage"
+        }
+    ],
+    "metadata": {
+        "title": "",
+        "description": "",
+        "repository": "",
+        "contributors": ""
+    },
+    "files": {},
+    "responses": {},
+})
+
 var presentFixation = function (timeout) {
     var s = new lab.html.Screen({
         title: 'fixation',
@@ -41,7 +65,7 @@ var presentFixation = function (timeout) {
 }
 
 var trialTemplate = new lab.flow.Sequence({
-  datacommit: false,
+  // datacommit: false,
   content: [
       // Fixation cross
       presentFixation(1000),
@@ -139,7 +163,7 @@ var trialTemplate = new lab.flow.Sequence({
                 TRIAL_COUNT += 1;
             },
             'after:end': function() {
-                DATA_RECORD.push(
+                this.state.data.push(
                     [
                         // trial idx
                         this.options.datastore.get('trialIdx'),
@@ -156,6 +180,7 @@ var trialTemplate = new lab.flow.Sequence({
                         this.options.datastore.get('duration'),
                     ]
                 )
+                console.log(this.state.data);
             }
         },
         // no timeout
@@ -242,29 +267,29 @@ var trial_epoch = new lab.flow.Sequence({
     ]
 })
 
-// With the individual components in place,
-// now put together the entire experiment
-const experiment = lab.util.fromObject({
-    "title": "root",
-    "type": "lab.flow.Sequence",
-    "parameters": {},
-    "plugins": [
-        {
-            "type": "lab.plugins.Metadata"
-        },
-        {
-            "type": "lab.plugins.PostMessage"
-        }
-    ],
-    "metadata": {
-        "title": "",
-        "description": "",
-        "repository": "",
-        "contributors": ""
-    },
-    "files": {},
-    "responses": {},
-})
+// // With the individual components in place,
+// // now put together the entire experiment
+// const experiment = lab.util.fromObject({
+//     "title": "root",
+//     "type": "lab.flow.Sequence",
+//     "parameters": {},
+//     "plugins": [
+//         {
+//             "type": "lab.plugins.Metadata"
+//         },
+//         {
+//             "type": "lab.plugins.PostMessage"
+//         }
+//     ],
+//     "metadata": {
+//         "title": "",
+//         "description": "",
+//         "repository": "",
+//         "contributors": ""
+//     },
+//     "files": {},
+//     "responses": {},
+// })
 
 var content = [
     // Initial instructions
@@ -275,6 +300,9 @@ var content = [
             'keypress(Space)': 'continue'
         },
         messageHandlers: {
+            'before:prepare': function() {
+                this.state.data = [];
+            },
             'end': function() {
                 GoInFullscreen(document.getElementById("experiment"));
             },
@@ -334,11 +362,6 @@ var content = [
             template: trial_epoch,
             // 2 epochs
             templateParameters: new Array(1),
-            messageHanlders : {
-                "after:end": function anonymous() {
-                    this.state.finalData = DATA_RECORD;
-                }
-            }
         }),
         // Thank-you page
         new lab.html.Screen({
@@ -347,11 +370,66 @@ var content = [
                 'keypress(Space)': 'end'
             },
             timeout: 1000,
+            messageHandlers : {
+                "after:end": function() {
+                    this.state.finalData = this.state.data;
+                }
+            }
         }),
 ]
-experiment.options.content = content
+
+// var content = [
+//     // Initial instructions
+//     new lab.html.Screen({
+//         tardy: true,
+//         contentUrl: 'pages/1-welcome.html',
+//         responses: {
+//             'keypress(Space)': 'continue'
+//         },
+//     }),
+//     // Simple debug tria to probe for user response
+//     // Record response
+//     new lab.html.Screen({
+//         tardy: true,
+//         title: 'response',
+//         contentUrl: 'pages/fixation.html',
+//         parameters: {
+//               word: 'Was the third image the same as first (f) or second (j)?',
+//         },
+//         // we need to set the correct response by hand
+//         responses: {
+//             'keypress(f)': 'first',
+//             'keypress(j)': 'second',
+//         },
+//         messageHandlers: {
+//             'before:prepare': function() {
+//                 // Set the correct response
+//                 // before the component is prepared
+//                 this.options.parameters.trialIdx = TRIAL_COUNT + 1;
+//                 TRIAL_COUNT += 1;
+//                 this.state.data = [];
+//             },
+//             'after:end': function() {
+//                 console.log(this.options.datastore.get('response'));
+//                 console.log(JSON.stringify(this.state.data));
+//                 this.state.data.push(
+//                     [
+//                         // response
+//                         this.options.datastore.get('response'),
+//                         // rt
+//                         this.options.datastore.get('duration'),
+//                     ])
+//                 this.state.finalData = this.state.data;
+//             }
+//         }
+
+//     })
+// ]
 // Collect data in a central data store
 experiment.options.datastore = new lab.data.Store()
+experiment.options.content = content
 // Go!
 // console.log(new lab.plugins.PostMessage())
 experiment.run()
+console.log(JSON.stringify(experiment.state.data));
+console.log(JSON.stringify(experiment.state.finalData));
