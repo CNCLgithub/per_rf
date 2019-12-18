@@ -62,6 +62,7 @@ class LabJsWrapper extends Component {
 
     // The last frame contains all collected data
     const data = labJsData[labJsData.length - 1].finalData;
+    console.log(data);
     processedData.push(data);
 
     return processedData;
