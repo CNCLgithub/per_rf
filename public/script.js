@@ -51,10 +51,6 @@ var content = [
         responses: {
             'keypress(Space)': 'continue'
         },
-        messageHandlers: {
-            'end': function() {
-                GoInFullscreen(document.getElementById("experiment"));
-            }
     }),
     // Simple debug tria to probe for user response
     // Record response
