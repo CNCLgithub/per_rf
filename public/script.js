@@ -172,10 +172,10 @@ var trialTemplate = new lab.flow.Sequence({
                         // second
                         this.options.datastore.get('second'),
                         // third
-                        this.options.datastore.get('third'),
+                        // this.options.datastore.get('third'),
+                        this.aggregateParameters.third,
                         // response
                         this.options.datastore.get('response'),
-                        this.options.datastore.get('correctResponse'),
                         // rt
                         this.options.datastore.get('duration'),
                     ]
@@ -248,7 +248,7 @@ var trial_epoch = new lab.flow.Sequence({
     content: [
         new lab.flow.Loop({
             template: trialTemplate,
-            templateParameters: EXPERIMENT_TRIALS.slice(1, 3),
+            templateParameters: EXPERIMENT_TRIALS,
             shuffle: true,
             parameters: {
                 feedback: false,
@@ -267,29 +267,6 @@ var trial_epoch = new lab.flow.Sequence({
     ]
 })
 
-// // With the individual components in place,
-// // now put together the entire experiment
-// const experiment = lab.util.fromObject({
-//     "title": "root",
-//     "type": "lab.flow.Sequence",
-//     "parameters": {},
-//     "plugins": [
-//         {
-//             "type": "lab.plugins.Metadata"
-//         },
-//         {
-//             "type": "lab.plugins.PostMessage"
-//         }
-//     ],
-//     "metadata": {
-//         "title": "",
-//         "description": "",
-//         "repository": "",
-//         "contributors": ""
-//     },
-//     "files": {},
-//     "responses": {},
-// })
 
 var content = [
     // Initial instructions
@@ -342,14 +319,14 @@ var content = [
             },
         }),
         // practice trials
-        // new lab.flow.Loop({
-        //     template: trialTemplate,
-        //     templateParameters: PRACTICE_TRIALS,
-        //     shuffle: true,
-        //     parameters: {
-        //         feedback: false,
-        //     }
-        // }),
+        new lab.flow.Loop({
+            template: trialTemplate,
+            templateParameters: PRACTICE_TRIALS,
+            shuffle: true,
+            parameters: {
+                feedback: false,
+            }
+        }),
         new lab.html.Screen({
             contentUrl: 'pages/4-interlude.html',
             responses: {
@@ -361,7 +338,7 @@ var content = [
         new lab.flow.Loop({
             template: trial_epoch,
             // 2 epochs
-            templateParameters: new Array(1),
+            templateParameters: new Array(2),
         }),
         // Thank-you page
         new lab.html.Screen({
