@@ -355,54 +355,6 @@ var content = [
         }),
 ]
 
-// var content = [
-//     // Initial instructions
-//     new lab.html.Screen({
-//         tardy: true,
-//         contentUrl: 'pages/1-welcome.html',
-//         responses: {
-//             'keypress(Space)': 'continue'
-//         },
-//     }),
-//     // Simple debug tria to probe for user response
-//     // Record response
-//     new lab.html.Screen({
-//         tardy: true,
-//         title: 'response',
-//         contentUrl: 'pages/fixation.html',
-//         parameters: {
-//               word: 'Was the third image the same as first (f) or second (j)?',
-//         },
-//         // we need to set the correct response by hand
-//         responses: {
-//             'keypress(f)': 'first',
-//             'keypress(j)': 'second',
-//         },
-//         messageHandlers: {
-//             'before:prepare': function() {
-//                 // Set the correct response
-//                 // before the component is prepared
-//                 this.options.parameters.trialIdx = TRIAL_COUNT + 1;
-//                 TRIAL_COUNT += 1;
-//                 this.state.data = [];
-//             },
-//             'after:end': function() {
-//                 console.log(this.options.datastore.get('response'));
-//                 console.log(JSON.stringify(this.state.data));
-//                 this.state.data.push(
-//                     [
-//                         // response
-//                         this.options.datastore.get('response'),
-//                         // rt
-//                         this.options.datastore.get('duration'),
-//                     ])
-//                 this.state.finalData = this.state.data;
-//             }
-//         }
-
-//     })
-// ]
-// Collect data in a central data store
 experiment.options.datastore = new lab.data.Store()
 experiment.options.content = content
 // Go!
