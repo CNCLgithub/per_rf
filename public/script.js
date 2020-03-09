@@ -256,8 +256,8 @@ var trial_epoch = new lab.flow.Sequence({
         new lab.html.Screen({
             contentUrl: 'pages/fixation.html',
             parameters: {
-                word: 'Good job! If you are not done yet, please feel free to take a break now' +
-                    '\n Press space to continue',
+                word: 'Good job! You have finished a block of trials, please feel free to take a break now' +
+                    '\n Press space when you are ready to continue',
             },
             responses: {
                 'keypress(Space)': 'continue'

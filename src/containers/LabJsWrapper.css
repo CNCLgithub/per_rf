@@ -6,3 +6,16 @@
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+
+main {
+  font-size: x-large;
+}
+
+footer {
+  font-size: large;
+}
+
+.bottom {
+  position: absolute;
+  bottom: 0px;
+}
