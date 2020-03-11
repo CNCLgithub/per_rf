@@ -248,7 +248,7 @@ var trial_epoch = new lab.flow.Sequence({
     content: [
         new lab.flow.Loop({
             template: trialTemplate,
-            templateParameters: EXPERIMENT_TRIALS,
+            templateParameters: EXPERIMENT_TRIALS.slice(0,60),
             shuffle: true,
             parameters: {
                 feedback: false,
@@ -256,13 +256,41 @@ var trial_epoch = new lab.flow.Sequence({
         new lab.html.Screen({
             contentUrl: 'pages/fixation.html',
             parameters: {
-                word: 'Good job! You have finished a block of trials, please feel free to take a break now' +
-                    '\n Press space when you are ready to continue',
+                word: 'Good job! You have finished a block of 60 trials, please feel free to take a break now.' +
+                    '<br> Press space when you are ready to continue',
             },
             responses: {
                 'keypress(Space)': 'continue'
             },
             datacommit: false,
+            messageHandlers: {
+                'before:prepare': function() {
+                    this.options.parameters.trialIdx = TRIAL_COUNT;
+                }
+            }
+            }),
+        new lab.flow.Loop({
+            template: trialTemplate,
+            templateParameters: EXPERIMENT_TRIALS.slice(60, EXPERIMENT_TRIALS.length),
+            shuffle: true,
+            parameters: {
+                feedback: false,
+            }}),
+        new lab.html.Screen({
+            contentUrl: 'pages/fixation.html',
+            parameters: {
+                word: 'Good job! You have finished a block of 60 trials, please feel free to take a break now.' +
+                    '<br> Press space when you are ready to continue',
+            },
+            responses: {
+                'keypress(Space)': 'continue'
+            },
+            datacommit: false,
+            messageHandlers: {
+                'before:prepare': function() {
+                    this.options.parameters.trialIdx = TRIAL_COUNT;
+                }
+            }
         }),
     ]
 })
